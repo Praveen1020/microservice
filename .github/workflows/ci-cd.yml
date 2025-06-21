@@ -41,6 +41,12 @@ jobs:
     - name: Set up kubectl
       uses: azure/setup-kubectl@v3
 
+    - name: Install gke-gcloud-auth-plugin
+      run: |
+        curl -Lo gke-gcloud-auth-plugin https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/gke-gcloud-auth-plugin
+        chmod +x gke-gcloud-auth-plugin
+        sudo mv gke-gcloud-auth-plugin /usr/local/bin/
+
     - name: Get GKE credentials
       run: |
         gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
