@@ -15,4 +15,4 @@ func main() {
     if err := http.ListenAndServe(":8080", nil); err != nil {
         log.Fatal("Server failed:", err)
     }
-}
+}// retry after fixing GCP_PROJECT_ID secret
