@@ -31,11 +31,11 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/golang-microservice:${{ github.sha }} .
+        docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/golang-microservice/golang-microservice:${{ github.sha }} .
 
     - name: Push Docker image to GCR
       run: |
-        docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/golang-microservice:${{ github.sha }}
+        docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/golang-microservice/golang-microservice:${{ github.sha }}
 
     - name: Set up kubectl
       uses: azure/setup-kubectl@v3
