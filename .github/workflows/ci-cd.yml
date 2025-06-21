@@ -1,0 +1,55 @@
+name: CI/CD to GKE
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-push-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: 1.21
+
+    - name: Run Go tests
+      run: go test ./...
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+    - name: Set up Docker to use GCR
+      run: gcloud auth configure-docker
+
+    - name: Build Docker image
+      run: |
+        docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/golang-microservice:${{ github.sha }} .
+
+    - name: Push Docker image to GCR
+      run: |
+        docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/golang-microservice:${{ github.sha }}
+
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v3
+
+    - name: Get GKE credentials
+      run: |
+        gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
+          --zone ${{ secrets.GKE_ZONE }} \
+          --project ${{ secrets.GCP_PROJECT_ID }}
+
+    - name: Deploy to GKE
+      run: |
+        kubectl set image deployment/golang-microservice \
+          golang-microservice=gcr.io/${{ secrets.GCP_PROJECT_ID }}/golang-microservice:${{ github.sha }} \
+          --record
+
+        kubectl rollout status deployment/golang-microservice
