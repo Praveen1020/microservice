@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golang-microservice
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: golang-microservice
+  template:
+    metadata:
+      labels:
+        app: golang-microservice
+    spec:
+      containers:
+      - name: golang-microservice
+        image: gcr.io/ci-cah/golang-microservice:latest
+        ports:
+        - containerPort: 8080
