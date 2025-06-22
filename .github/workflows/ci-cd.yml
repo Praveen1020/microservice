@@ -41,11 +41,19 @@ jobs:
     - name: Set up kubectl
       uses: azure/setup-kubectl@v3
 
-    - name: Install gke-gcloud-auth-plugin
+    - name: Check runner architecture
+      run: uname -m
+
+    - name: Install Google Cloud SDK with gke-gcloud-auth-plugin
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        version: 'latest'
+        export_default_credentials: true
+
+    - name: Configure gcloud for GKE auth plugin
       run: |
-        curl -Lo gke-gcloud-auth-plugin https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/gke-gcloud-auth-plugin
-        chmod +x gke-gcloud-auth-plugin
-        sudo mv gke-gcloud-auth-plugin /usr/local/bin/
+        gcloud config set container/use_client_certificate True
+        gcloud config set auth/use_gke_gcloud_auth_plugin True
 
     - name: Get GKE credentials
       run: |
