@@ -53,7 +53,6 @@ jobs:
     - name: Configure gcloud for GKE auth plugin
       run: |
         gcloud config set container/use_client_certificate True
-        gcloud config set auth/use_gke_gcloud_auth_plugin True
 
     - name: Get GKE credentials
       run: |
