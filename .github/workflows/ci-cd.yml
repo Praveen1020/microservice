@@ -73,6 +73,9 @@ jobs:
 
     - name: Deploy to GKE
       run: |
+         
+        # This is the crucial missing step that adds your probes to the deployment.
+        kubectl apply -f k8s/deployment.yaml
         # The image path here now correctly points to Artifact Registry, matching the push step.
         kubectl set image deployment/golang-microservice \
         golang-microservice=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/golang-microservice/golang-microservice:${{ github.sha }}
