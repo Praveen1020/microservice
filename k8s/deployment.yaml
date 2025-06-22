@@ -12,8 +12,39 @@ spec:
       labels:
         app: golang-microservice
     spec:
-      containers:
-      - name: golang-microservice
-        image: gcr.io/ci-cah/golang-microservice:latest
-        ports:
+    containers:
+    - name: golang-microservice
+      image: gcr.io/ci-cah/golang-microservice:latest # Note: Your CI/CD will replace this tag later
+      ports:
         - containerPort: 8080
+
+    env:
+      - name: PORT
+        value: "8080"
+
+    # Liveness probe tells Kubernetes if the app is alive.
+    livenessProbe:
+      httpGet:
+        path: /healthz/live
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 15
+      failureThreshold: 3
+
+    # Readiness probe tells Kubernetes if the app is ready to serve traffic.
+    readinessProbe:
+      httpGet:
+        path: /healthz/ready
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      failureThreshold: 2
+
+    # ✅ Resources block added to avoid noisy neighbor issues
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "250m"
+      limits:
+        memory: "256Mi"
+        cpu: "500m"
