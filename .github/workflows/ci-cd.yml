@@ -40,11 +40,11 @@ jobs:
       id: auth
       uses: google-github-actions/auth@v1
       with:
-        # If using Workload Identity Federation (recommended)
+        # This is the string that tells Google HOW to trust GitHub
         workload_identity_provider: 'projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ secrets.GCP_WIF_POOL_ID }}/providers/${{ secrets.GCP_WIF_PROVIDER_ID }}'
+        
+        # This is the string that tells Google WHO to be (the service account to impersonate)
         service_account: '${{ secrets.GCP_SA_EMAIL }}'
-        # If you must use a service account key (less secure)
-        # credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
     # This single step installs gcloud, kubectl, and the gke-gcloud-auth-plugin correctly for the runner's architecture.
     - name: Set up Cloud SDK
