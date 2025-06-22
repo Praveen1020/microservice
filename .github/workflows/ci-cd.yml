@@ -73,7 +73,8 @@ jobs:
 
     - name: Deploy to GKE
       run: |
+        # The image path here now correctly points to Artifact Registry, matching the push step.
         kubectl set image deployment/golang-microservice \
-          golang-microservice=gcr.io/${{ secrets.GCP_PROJECT_ID }}/golang-microservice:${{ github.sha }} 
+        golang-microservice=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/golang-microservice/golang-microservice:${{ github.sha }}
 
         kubectl rollout status deployment/golang-microservice
