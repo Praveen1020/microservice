@@ -49,9 +49,20 @@ jobs:
     - name: Check runner architecture
       run: uname -m
     
-    - name: Install gke-gcloud-auth-plugin
+    - name: Install gke-gcloud-auth-plugin (architecture-aware)
       run: |
-        curl -Lo gke-gcloud-auth-plugin https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/gke-gcloud-auth-plugin
+        ARCH=$(uname -m)
+        if [ "$ARCH" = "x86_64" ]; then
+          ARCH_ALIAS="amd64"
+        elif [ "$ARCH" = "aarch64" ]; then
+          ARCH_ALIAS="arm64"
+        else
+          echo "Unsupported architecture: $ARCH"
+          exit 1
+        fi
+
+        VERSION=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+        curl -Lo gke-gcloud-auth-plugin https://dl.k8s.io/release/${VERSION}/bin/linux/${ARCH_ALIAS}/gke-gcloud-auth-plugin
         chmod +x gke-gcloud-auth-plugin
         sudo mv gke-gcloud-auth-plugin /usr/local/bin/
 
@@ -74,7 +85,6 @@ jobs:
     - name: Deploy to GKE
       run: |
         kubectl set image deployment/golang-microservice \
-          golang-microservice=gcr.io/${{ secrets.GCP_PROJECT_ID }}/golang-microservice:${{ github.sha }} \
-          --record
+          golang-microservice=gcr.io/${{ secrets.GCP_PROJECT_ID }}/golang-microservice:${{ github.sha }} 
 
         kubectl rollout status deployment/golang-microservice
