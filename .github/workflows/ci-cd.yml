@@ -58,7 +58,6 @@ jobs:
     - name: Configure gcloud to use gke-gcloud-auth-plugin
       run: |
         gcloud config set container/use_client_certificate False
-        gcloud config set auth/use_gke_gcloud_auth_plugin True
     
     - name: Install Google Cloud SDK with gke-gcloud-auth-plugin
       uses: google-github-actions/setup-gcloud@v1
