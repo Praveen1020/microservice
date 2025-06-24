@@ -2,11 +2,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: golang-microservice
-  # --- ADD THIS ANNOTATIONS BLOCK ---
   annotations:
     prometheus.io/scrape: 'true'
     prometheus.io/port:   '8080'
-  # --- END OF ADDED SECTION ---
+    
 spec:
   selector:
     app: golang-microservice

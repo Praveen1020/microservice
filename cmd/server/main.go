@@ -11,7 +11,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-// Prometheus metric to count total HTTP requests, labeled by path
+// Prometheus metric to count total HTTP requests.
 var httpRequestsTotal = promauto.NewCounterVec(
 	prometheus.CounterOpts{
 		Name: "golang_microservice_http_requests_total",
@@ -20,7 +20,7 @@ var httpRequestsTotal = promauto.NewCounterVec(
 	[]string{"path"},
 )
 
-// Middleware to collect Prometheus metrics for each request
+// Middleware to collect Prometheus metrics for each request.
 func metricsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		httpRequestsTotal.WithLabelValues(r.URL.Path).Inc()
@@ -45,16 +45,16 @@ func healthzHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	// Application handler wrapped with metrics collection
+	// Application handler wrapped with metrics collection.
 	mainHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello from GKE Golang Microservice! (v2 with Probes & Metrics)")
 	})
 	http.Handle("/", metricsMiddleware(mainHandler))
 
-	// Metrics endpoint
+	// Metrics endpoint.
 	http.Handle("/metrics", promhttp.Handler())
 
-	// Health and probe endpoints
+	// Health and probe endpoints.
 	http.HandleFunc("/healthz", healthzHandler)
 	http.HandleFunc("/healthz/live", livenessHandler)
 	http.HandleFunc("/healthz/ready", readinessHandler)

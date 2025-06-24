@@ -12,11 +12,10 @@ spec:
       labels:
         app: golang-microservice
     spec:
-      # 'containers' is a list of container definitions under 'spec'
+      
       containers:
-      # The dash '-' starts the definition of a single container
       - name: golang-microservice
-        image: gcr.io/ci-cah/golang-microservice:latest # Note: Your CI/CD will replace this tag later
+        image: gcr.io/ci-cah/golang-microservice:latest 
         ports:
           - containerPort: 8080
         
